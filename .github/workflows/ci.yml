@@ -20,14 +20,15 @@ jobs:
         run: uv sync --all-groups --frozen
       - name: Verify raw extracts are untouched
         run: cd source/data/raw && shasum -a 256 -c MANIFEST.sha256
+      # Before lint: sqlfluff's dbt templater compiles the project, which needs dbt_utils.
+      - name: dbt deps
+        run: cd dbt && uv run dbt deps --profiles-dir .
       - name: Lint
         run: |
           uv run ruff check source
           cd dbt && uv run sqlfluff lint models analyses tests --dialect duckdb
       - name: Loader tests
         run: uv run pytest -q
-      - name: dbt deps
-        run: cd dbt && uv run dbt deps --profiles-dir .
       - name: Full pipeline (load, seed, build incl. dbt tests, analyses, docs)
         run: uv run python -m source.pipeline.run
       - name: Upload run evidence
