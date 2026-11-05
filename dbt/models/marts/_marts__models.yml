@@ -1,0 +1,208 @@
+version: 2
+models:
+- name: dim_variables
+  description: 'Catalogue of modelled variables with their validity by year and code-list size. Read this before
+    querying; it tells you in which years and for whom a variable can be answered.
+
+    '
+  columns:
+  - name: variable_name
+    data_tests:
+    - unique
+    - not_null
+  - name: variable_label
+  - name: value_type
+    data_tests:
+    - not_null
+  - name: topic
+  - name: brief_question
+    description: The Section 1 question the variable serves, if any.
+  - name: universe
+  - name: notes
+  - name: years_full_sample
+    description: Survey years in which the variable was asked of everyone.
+  - name: years_ballot_limited
+    description: Survey years in which only some ballots carried the item.
+  - name: years_subsample
+    description: Survey years in which a random subsample received the item.
+  - name: years_not_asked
+    description: Survey years in the extracts in which the variable was not fielded.
+  - name: n_substantive_codes
+- name: fct_responses
+  description: 'One row per respondent x modelled variable (9,247 respondents x 23 variables). Every row has exactly
+    one value_status; value_* columns are null unless value_status = ''answer''. Use this for "how many were asked
+    / answered / did not apply" style aggregates, and for any variable without writing new SQL.
+
+    '
+  columns:
+  - name: respondent_key
+    description: '''<year>-<id_>''; the respondent identifier.'
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('int_gss__respondents')
+          field: respondent_key
+  - name: year
+    data_tests:
+    - not_null
+  - name: id_
+    data_tests:
+    - not_null
+  - name: variable_name
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('dim_variables')
+          field: variable_name
+  - name: value_type
+    data_tests:
+    - accepted_values:
+        arguments:
+          values:
+          - categorical
+          - count
+          - weight
+  - name: coverage
+    description: Validity of this variable in this year (full / ballot / subsample / none).
+    data_tests:
+    - not_null
+    - accepted_values:
+        arguments:
+          values:
+          - full
+          - ballot
+          - subsample
+          - none
+  - name: value_status
+    description: 'answer = genuine response; did_not_apply = skip pattern or not on this ballot; dont_know; no_answer
+      (includes skipped_on_web in 2021); not_asked_in_year = the item was not fielded that year; uncodable. ''unmapped''
+      never occurs in a passing build.
+
+      '
+    data_tests:
+    - not_null
+    - accepted_values:
+        arguments:
+          values:
+          - answer
+          - did_not_apply
+          - dont_know
+          - no_answer
+          - not_asked_in_year
+          - uncodable
+  - name: missing_detail
+    description: Finer source reason for a non-answer; null for answers.
+  - name: value_code
+    description: GSS numeric code (categorical) or the integer value (count). Null unless answer.
+  - name: value_label
+    description: Readable answer text. Null unless answer.
+  - name: value_numeric
+    description: Count or weight as a number. Null unless answer.
+  - name: value_group
+    description: Coarse grouping (e.g. relig16 family, wrkstat working/unemployed/not in labour force); equals value_label
+      when no grouping is defined.
+  - name: value_group_order
+    description: Sort order for value_group.
+  - name: source_reserved_code
+    description: Reserved code as the source had it; useful for auditing the metadata override.
+  - name: source_extracts
+    description: Which cut(s) the respondent came from.
+  data_tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - respondent_key
+        - variable_name
+  - dbt_utils.expression_is_true:
+      arguments:
+        expression: value_status = 'answer' or (value_code is null and value_label is null and value_numeric is
+          null)
+      name: fct_responses_value_columns_null_unless_answer
+  - dbt_utils.expression_is_true:
+      arguments:
+        expression: value_status <> 'answer' or value_code is not null or value_numeric is not null
+      name: fct_responses_answers_have_a_value
+- name: fct_respondents
+  description: 'One row per distinct respondent (9,247), wide. For each categorical variable there are <var>_label,
+    <var>_code, <var>_group and <var>_status; for each count <var> and <var>_status; weights are plain columns.
+    Columns are generated from seed_gss__variables.
+
+    '
+  columns:
+  - name: respondent_key
+    data_tests:
+    - unique
+    - not_null
+  - name: year
+    data_tests:
+    - not_null
+    - accepted_values:
+        arguments:
+          values:
+          - 2016
+          - 2018
+          - 2021
+          quote: false
+  - name: id_
+    data_tests:
+    - not_null
+  - name: source_extracts
+  - name: is_in_both_cuts
+    data_tests:
+    - not_null
+  - name: ballot_label
+    data_tests:
+    - not_null
+    - accepted_values:
+        arguments:
+          values:
+          - Ballot a
+          - Ballot b
+          - Ballot c
+  - name: wtssps
+    description: Post-stratification weight; the analysis weight. Mean 1 within each year.
+    data_tests:
+    - not_null
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          inclusive: false
+  - name: wtssnrps
+    description: Post-stratification + non-response weight; carried for comparison.
+    data_tests:
+    - not_null
+  - name: age
+    description: Age in years, top-coded at 89. Null when not an answer (see age_status).
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 18
+          max_value: 89
+  - name: tvhours
+    description: Hours of TV per day (0-24). Null when not an answer.
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 24
+  - name: wwwhr
+    description: Hours on the web per week (0-168). Null when not an answer.
+    data_tests:
+    - dbt_utils.accepted_range:
+        arguments:
+          min_value: 0
+          max_value: 168
+  - name: wrkstat_label
+    description: Labour force status. Working = codes 1-3.
+  - name: wrkstat_group
+    description: Working / Unemployed / Not in labour force.
+  - name: evwork_status
+    description: Expected did_not_apply for everyone currently working or unemployed.
+  - name: postlife_status
+    description: not_asked_in_year for every 2021 respondent.
+  - name: reliten_status
+    description: not_asked_in_year for every 2021 respondent (see relitenv / relitennv).
+  - name: relig16_group
+    description: Religion raised in, grouped into families.

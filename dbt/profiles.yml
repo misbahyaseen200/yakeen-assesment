@@ -1,0 +1,18 @@
+# dbt profile. Committed on purpose: it contains no credentials, only env-var lookups with
+# local defaults. DuckDB needs no secrets. A server database (e.g. Postgres) would add a
+# second target here whose password comes from an env var set in .env (git-ignored).
+gss_religiosity_media:
+  target: "{{ env_var('DBT_TARGET', 'dev') }}"
+  outputs:
+    dev:
+      type: duckdb
+      # Path is relative to this file's directory when dbt is run from /dbt; the pipeline
+      # runner always passes an absolute path via GSS_DB_PATH.
+      path: "{{ env_var('GSS_DB_PATH', '../data/gss.duckdb') }}"
+      schema: main
+      threads: 4
+    ci:
+      type: duckdb
+      path: "{{ env_var('GSS_DB_PATH', '../data/gss_ci.duckdb') }}"
+      schema: main
+      threads: 2

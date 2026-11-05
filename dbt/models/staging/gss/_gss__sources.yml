@@ -1,0 +1,42 @@
+version: 2
+sources:
+- name: gss_raw
+  description: 'Raw layer written by the Python loader (source/pipeline/load_extracts.py). One row per extract x
+    respondent with the source row preserved as JSON. dbt never writes here.
+
+    '
+  database: gss
+  schema: raw
+  tables:
+  - name: extract_rows
+    description: Source rows exactly as received, keyed by (extract_name, year, id_).
+    columns:
+    - name: extract_name
+      description: Which Explorer extract the row came from (cut_a_2016_2018 / cut_b_2018_2021).
+      data_tests:
+      - not_null
+    - name: year
+      data_tests:
+      - not_null
+    - name: id_
+      data_tests:
+      - not_null
+    - name: record
+      description: The original JSON object for the row; values are labels, not codes.
+      data_tests:
+      - not_null
+    - name: source_file_sha256
+      description: SHA-256 of the file the row was read from; ties every row to the committed manifest.
+    data_tests:
+    - dbt_utils.unique_combination_of_columns:
+        arguments:
+          combination_of_columns:
+          - extract_name
+          - year
+          - id_
+  - name: extract_variables
+    description: Variable name, label and position as listed in each extract's metadata.
+  - name: extract_codes
+    description: Code lists embedded in each extract (used to cross-check the seeds).
+  - name: load_runs
+    description: One row per load attempt with hashes, counts, validation findings and outcome.

@@ -1,0 +1,24 @@
+code_from,code_to,sector_name,naics_sector
+170,290,"Agriculture, forestry, fishing and hunting",11
+370,490,"Mining, quarrying, and oil and gas extraction",21
+570,690,Utilities,22
+770,770,Construction,23
+1070,3990,Manufacturing,31-33
+4070,4590,Wholesale trade,42
+4670,5790,Retail trade,44-45
+6070,6390,Transportation and warehousing,48-49
+6470,6780,Information,51
+6870,6990,Finance and insurance,52
+7070,7190,Real estate and rental and leasing,53
+7270,7490,"Professional, scientific, and technical services",54
+7570,7570,Management of companies and enterprises,55
+7580,7790,Administrative and support and waste management services,56
+7860,7890,Educational services,61
+7970,8470,Health care and social assistance,62
+8560,8590,"Arts, entertainment, and recreation",71
+8660,8690,Accommodation and food services,72
+8770,9290,"Other services, except public administration",81
+9370,9590,Public administration,92
+9670,9870,Military,
+9890,9890,Uncodeable,
+9997,9997,Uncodeable,

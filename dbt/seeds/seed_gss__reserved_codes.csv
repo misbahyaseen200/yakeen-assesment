@@ -1,0 +1,15 @@
+code,code_label,value_status,missing_detail
+-40,".m:  DK, NA, IAP",no_answer,dk_na_iap_combined
+-50,.p:  Not applicable (I have not faced this decision)/Not imputable,did_not_apply,not_applicable_or_not_imputable
+-60,.j:  I do not have a job,did_not_apply,no_job
+-70,.y:  Not available in this year,not_asked_in_year,not_available_in_year
+-80,.x:  Not available in this release,not_asked_in_year,not_available_in_release
+-90,.r:  Refused,no_answer,refused
+-93,.f:  Missing Birthdate Information,no_answer,missing_birthdate
+-94,.q:  Not imputable,uncodable,not_imputable
+-95,.u:  Uncodable,uncodable,uncodable
+-96,.z:  Variable-specific reserve code,uncodable,variable_specific_reserve
+-97,.s:  Skipped on Web,no_answer,skipped_on_web
+-98,.d:  Do not Know/Cannot Choose,dont_know,dont_know_cannot_choose
+-99,.n:  No answer,no_answer,no_answer
+-100,.i:  Inapplicable,did_not_apply,inapplicable

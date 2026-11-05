@@ -1,0 +1,39 @@
+name: gss_religiosity_media
+version: "1.0.0"
+config-version: 2
+profile: gss_religiosity_media
+require-dbt-version: [">=1.9.0", "<2.0.0"]
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+analysis-paths: ["analyses"]
+macro-paths: ["macros"]
+docs-paths: ["docs"]
+
+clean-targets: ["target", "dbt_packages"]
+
+models:
+  gss_religiosity_media:
+    +persist_docs:
+      relation: true
+      columns: true
+    staging:
+      +schema: staging
+      +materialized: view
+    intermediate:
+      +schema: intermediate
+      +materialized: table
+    marts:
+      +schema: marts
+      +materialized: table
+
+seeds:
+  gss_religiosity_media:
+    +schema: metadata
+    +quote_columns: false
+
+tests:
+  gss_religiosity_media:
+    +store_failures: true
+    +schema: dbt_test_failures

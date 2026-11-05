@@ -1,0 +1,73 @@
+variable_name,year,coverage,ballots,note
+ballot,2016,full,,
+ballot,2018,full,,
+ballot,2021,full,,
+wtssps,2016,full,,
+wtssps,2018,full,,
+wtssps,2021,full,,
+wtssnrps,2016,full,,
+wtssnrps,2018,full,,
+wtssnrps,2021,full,,
+wrkstat,2016,full,,
+wrkstat,2018,full,,
+wrkstat,2021,full,,
+evwork,2016,full,,asked only of wrkstat 5-8
+evwork,2018,full,,asked only of wrkstat 5-8
+evwork,2021,full,,asked only of wrkstat 5-8
+indus10,2016,full,,
+indus10,2018,full,,
+indus10,2021,full,,
+satjob,2016,full,,on all ballots but only about half of ballot a received it in 2016
+satjob,2018,full,,
+satjob,2021,full,,
+degree,2016,full,,
+degree,2018,full,,
+degree,2021,full,,
+age,2016,full,,
+age,2018,full,,
+age,2021,full,,web mode: 226 inapplicable and 107 no answer
+sex,2016,full,,
+sex,2018,full,,
+sex,2021,full,,web mode: 71 no answer
+region,2016,full,,
+region,2018,full,,
+region,2021,full,,
+relig,2016,full,,
+relig,2018,full,,
+relig,2021,full,,
+attend,2016,full,,
+attend,2018,full,,
+attend,2021,full,,
+reliten,2016,full,,
+reliten,2018,full,,
+reliten,2021,none,,not fielded; see relitenv and relitennv
+relitenv,2016,none,,variable did not exist (source codes it as inapplicable)
+relitenv,2018,none,,variable did not exist (source codes it as inapplicable)
+relitenv,2021,subsample,,random half of the 2021 sample
+relitennv,2016,none,,variable did not exist (source codes it as inapplicable)
+relitennv,2018,none,,variable did not exist (source codes it as inapplicable)
+relitennv,2021,subsample,,random half of the 2021 sample
+postlife,2016,full,,
+postlife,2018,full,,
+postlife,2021,none,,not fielded in 2021
+pray,2016,full,,
+pray,2018,full,,
+pray,2021,full,,
+relig16,2016,full,,
+relig16,2018,full,,
+relig16,2021,full,,
+news,2016,ballot,"a,b",
+news,2018,ballot,"a,b",
+news,2021,ballot,"a,b",
+tvhours,2016,ballot,"a,b",
+tvhours,2018,ballot,"a,b",
+tvhours,2021,ballot,"a,b",
+wwwhr,2016,ballot,"a,b",further skip: asked of web users
+wwwhr,2018,ballot,"a,b",further skip: asked of web users
+wwwhr,2021,ballot,"a,b",further skip: asked of web users
+inttech,2016,ballot,"a,b",all of ballot a and about half of ballot b
+inttech,2018,ballot,"a,b",all of ballot a and about half of ballot b
+inttech,2021,ballot,"b,c",most of ballot b and about half of ballot c
+prayer,2016,none,,not in cut A
+prayer,2018,ballot,"a,b,c",not modelled
+prayer,2021,none,,not fielded; not modelled

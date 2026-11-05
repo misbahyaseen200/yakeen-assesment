@@ -1,0 +1,35 @@
+variable_name,code,group_label,group_order
+relig16,1,Protestant,1
+relig16,2,Catholic,2
+relig16,11,Other Christian,3
+relig16,10,Other Christian,3
+relig16,13,Other Christian,3
+relig16,3,Jewish,4
+relig16,9,Muslim,5
+relig16,6,Eastern religions,6
+relig16,7,Eastern religions,6
+relig16,8,Eastern religions,6
+relig16,5,Other,7
+relig16,12,Other,7
+relig16,4,None,8
+relig,1,Protestant,1
+relig,2,Catholic,2
+relig,11,Other Christian,3
+relig,10,Other Christian,3
+relig,13,Other Christian,3
+relig,3,Jewish,4
+relig,9,Muslim,5
+relig,6,Eastern religions,6
+relig,7,Eastern religions,6
+relig,8,Eastern religions,6
+relig,5,Other,7
+relig,12,Other,7
+relig,4,None,8
+wrkstat,1,Working,1
+wrkstat,2,Working,1
+wrkstat,3,Working,1
+wrkstat,4,Unemployed,2
+wrkstat,5,Not in labour force,3
+wrkstat,6,Not in labour force,3
+wrkstat,7,Not in labour force,3
+wrkstat,8,Not in labour force,3

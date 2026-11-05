@@ -1,0 +1,210 @@
+version: 2
+seeds:
+- name: seed_gss__variables
+  description: 'One row per GSS variable present in the extracts: what it is, what kind of value it holds, which
+    brief question it serves and whether it is modelled. Hand-curated from the GSS Data Explorer variable pages.
+    Adding a variable to the pipeline starts here.
+
+    '
+  config:
+    column_types:
+      variable_name: varchar
+      is_modelled: boolean
+  columns:
+  - name: variable_name
+    description: GSS mnemonic, lowercase, as it appears in the extract.
+    data_tests:
+    - unique
+    - not_null
+  - name: variable_label
+    description: Short label from the Explorer.
+  - name: value_type
+    description: categorical (code list), count (integer quantity), weight, identifier.
+    data_tests:
+    - accepted_values:
+        arguments:
+          values:
+          - categorical
+          - count
+          - weight
+          - identifier
+  - name: topic
+    description: Analyst-facing grouping (design, demographics, employment, religiosity, media, unrelated).
+  - name: is_modelled
+    description: Whether the dbt layer exposes it. False keeps a documented variable out of the marts (e.g. prayer).
+    data_tests:
+    - not_null
+  - name: brief_question
+    description: The Section 1 question this variable answers, if any.
+  - name: universe
+    description: Who is asked, in words.
+  - name: notes
+    description: Caveats an analyst must know.
+- name: seed_gss__code_labels
+  description: 'Substantive (>= 0) code -> label for every categorical variable, generated from the metadata embedded
+    in the extracts by source/metadata/build_seeds.py. Do not edit by hand; regenerate.
+
+    '
+  config:
+    column_types:
+      variable_name: varchar
+      code: integer
+      code_label: varchar
+  columns:
+  - name: variable_name
+    data_tests:
+    - not_null
+  - name: code
+    description: Numeric GSS code (never negative; reserved codes live in seed_gss__reserved_codes).
+    data_tests:
+    - not_null
+  - name: code_label
+    description: Label exactly as the Explorer exports it, which is what the raw rows contain.
+    data_tests:
+    - not_null
+  data_tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - variable_name
+        - code
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - variable_name
+        - code_label
+      name: code_labels_are_unique_within_variable
+      config:
+        # indus10 has two codes labelled Uncodeable (9890, 9997): a documented source quirk
+        where: not (variable_name = 'indus10' and code_label = 'Uncodeable')
+- name: seed_gss__reserved_codes
+  description: 'The GSS reserved (negative) codes and the semantics this project assigns them. value_status is the
+    closed vocabulary used by every model; missing_detail keeps the finer source distinction (e.g. skipped_on_web
+    is a kind of no_answer).
+
+    '
+  config:
+    column_types:
+      code: integer
+  columns:
+  - name: code
+    data_tests:
+    - unique
+    - not_null
+  - name: code_label
+    description: 'Label as exported, e.g. ''.i:  Inapplicable''.'
+    data_tests:
+    - unique
+    - not_null
+  - name: value_status
+    data_tests:
+    - not_null
+    - accepted_values:
+        arguments:
+          values:
+          - did_not_apply
+          - dont_know
+          - no_answer
+          - not_asked_in_year
+          - uncodable
+  - name: missing_detail
+    data_tests:
+    - not_null
+- name: seed_gss__variable_years
+  description: 'Where each variable is valid: for every modelled variable and extracted survey year, whether it
+    was fielded for the full sample, only on some ballots, on a random subsample, or not at all. This, not the source''s
+    own reserved code, decides value_status = not_asked_in_year.
+
+    '
+  config:
+    column_types:
+      variable_name: varchar
+      year: integer
+      coverage: varchar
+      ballots: varchar
+  columns:
+  - name: variable_name
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('seed_gss__variables')
+          field: variable_name
+  - name: year
+    data_tests:
+    - not_null
+    - accepted_values:
+        arguments:
+          values:
+          - 2016
+          - 2018
+          - 2021
+          quote: false
+  - name: coverage
+    data_tests:
+    - not_null
+    - accepted_values:
+        arguments:
+          values:
+          - full
+          - ballot
+          - subsample
+          - none
+  - name: ballots
+    description: Comma-separated ballot letters when coverage = ballot.
+  data_tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - variable_name
+        - year
+- name: seed_gss__indus10_sectors
+  description: 'Roll-up of Census 2007/2010 industry codes (indus10) to NAICS sectors, as inclusive code ranges.
+    Used for Q3 so that ''most common industry'' is not dominated by 271 tiny categories.
+
+    '
+  config:
+    column_types:
+      code_from: integer
+      code_to: integer
+  columns:
+  - name: code_from
+    data_tests:
+    - not_null
+    - unique
+  - name: code_to
+    data_tests:
+    - not_null
+  - name: sector_name
+    data_tests:
+    - not_null
+  - name: naics_sector
+    description: NAICS 2007 sector code; empty for military and uncodeable.
+- name: seed_gss__answer_groups
+  description: 'Optional coarse groupings of substantive codes (e.g. relig16 into religious families, wrkstat into
+    working / unemployed / not in labour force). A code without a row keeps its own label as its group.
+
+    '
+  config:
+    column_types:
+      variable_name: varchar
+      code: integer
+      group_order: integer
+  columns:
+  - name: variable_name
+    data_tests:
+    - not_null
+  - name: code
+    data_tests:
+    - not_null
+  - name: group_label
+    data_tests:
+    - not_null
+  - name: group_order
+    description: Display order of the group.
+  data_tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - variable_name
+        - code

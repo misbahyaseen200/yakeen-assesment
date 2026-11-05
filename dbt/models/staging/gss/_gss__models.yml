@@ -1,0 +1,90 @@
+version: 2
+models:
+- name: stg_gss__extract_rows
+  description: 'Raw extract rows with the respondent key derived. One row per extract x respondent, so the 2,348
+    respondents of 2018 appear twice (once per cut). The JSON record is untouched.
+
+    '
+  columns:
+  - name: respondent_key
+    description: '''<year>-<id_>''. Unique within an extract, shared across extracts for the overlap year.'
+    data_tests:
+    - not_null
+  - name: source_extract
+    description: Explorer extract the row came from.
+    data_tests:
+    - not_null
+    - accepted_values:
+        arguments:
+          values:
+          - cut_a_2016_2018
+          - cut_b_2018_2021
+  - name: year
+    description: GSS survey year.
+    data_tests:
+    - not_null
+    - accepted_values:
+        arguments:
+          values:
+          - 2016
+          - 2018
+          - 2021
+          quote: false
+  - name: id_
+    description: GSS respondent id within the year.
+    data_tests:
+    - not_null
+  - name: record
+    description: Original JSON object; values are labels as exported by the Explorer.
+  - name: source_row_number
+    description: 0-based position of the row in the source file.
+  - name: source_file_sha256
+    description: Hash of the source file (see source/data/raw/MANIFEST.sha256).
+  - name: load_run_id
+    description: raw.load_runs row that wrote this record.
+  - name: loaded_at
+    description: UTC load timestamp.
+  data_tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - source_extract
+        - respondent_key
+- name: stg_gss__responses
+  description: 'Generic unpivot of the JSON record: one row per extract x respondent x variable. Values are still
+    the raw exported strings (labels or reserved-code labels). Nothing is classified yet.
+
+    '
+  columns:
+  - name: source_extract
+    data_tests:
+    - not_null
+  - name: respondent_key
+    data_tests:
+    - not_null
+  - name: year
+    data_tests:
+    - not_null
+  - name: variable_name
+    description: Key of the JSON record, i.e. the GSS mnemonic.
+    data_tests:
+    - not_null
+  - name: raw_value
+    description: The exported value as text (JSON numbers rendered as strings).
+  - name: raw_json_type
+    description: JSON type of the value in the source (VARCHAR, BIGINT, DOUBLE).
+    data_tests:
+    - accepted_values:
+        arguments:
+          values:
+          - VARCHAR
+          - BIGINT
+          - UBIGINT
+          - DOUBLE
+  data_tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - source_extract
+        - respondent_key
+        - variable_name

@@ -1,0 +1,95 @@
+version: 2
+models:
+- name: int_gss__respondents
+  description: One row per distinct respondent across both cuts; records which extracts carried them.
+  columns:
+  - name: respondent_key
+    data_tests:
+    - unique
+    - not_null
+  - name: year
+    data_tests:
+    - not_null
+  - name: id_
+    data_tests:
+    - not_null
+  - name: source_extracts
+    description: Sorted list of extract names the respondent appears in.
+  - name: n_source_extracts
+    description: 1 or 2.
+    data_tests:
+    - accepted_values:
+        arguments:
+          values:
+          - 1
+          - 2
+          quote: false
+  - name: is_in_both_cuts
+    description: True for the 2018 overlap.
+    data_tests:
+    - not_null
+  - name: last_loaded_at
+- name: int_gss__responses_classified
+  description: 'One row per respondent x variable with the survey semantics applied: numeric code recovered from
+    the label, value_status classified (answer vs typed reason for absence), counts and weights parsed, optional
+    group label attached. Includes variables with is_modelled = false so unexpected columns are visible here, but
+    marts exclude them.
+
+    '
+  columns:
+  - name: respondent_key
+    data_tests:
+    - not_null
+  - name: variable_name
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('seed_gss__variables')
+          field: variable_name
+  - name: value_type
+    description: From seed_gss__variables; null means the variable is not in the seed (caught by tests).
+  - name: is_modelled
+  - name: coverage
+    description: full / ballot / subsample / none for this variable-year, from seed_gss__variable_years.
+    data_tests:
+    - not_null:
+        config:
+          where: is_modelled
+  - name: coverage_ballots
+  - name: value_status
+    description: 'Closed set: answer, did_not_apply, dont_know, no_answer, not_asked_in_year, uncodable, unmapped.'
+    data_tests:
+    - not_null
+    - accepted_values:
+        arguments:
+          values:
+          - answer
+          - did_not_apply
+          - dont_know
+          - no_answer
+          - not_asked_in_year
+          - uncodable
+          - unmapped
+  - name: missing_detail
+    description: Finer source reason when value_status is not 'answer' (e.g. skipped_on_web, not_fielded_per_metadata).
+  - name: value_code
+    description: Numeric GSS code for categorical answers; the integer itself for counts; null when not an answer.
+  - name: value_label
+    description: Readable answer; null when not an answer.
+  - name: value_numeric
+    description: Numeric value for counts and weights; null otherwise.
+  - name: value_group
+    description: Coarse grouping from seed_gss__answer_groups, falling back to the label.
+  - name: value_group_order
+  - name: raw_value
+    description: Exported string, for audit.
+  - name: source_reserved_code
+    description: The reserved code the source used (e.g. -100), kept even when metadata overrides it.
+  - name: source_extracts
+  data_tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns:
+        - respondent_key
+        - variable_name
