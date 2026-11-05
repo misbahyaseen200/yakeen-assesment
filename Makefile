@@ -4,7 +4,7 @@
 UV ?= uv
 export GSS_DB_PATH ?= $(CURDIR)/data/gss.duckdb
 
-.PHONY: help setup pipeline load seed build test analyses docs serve-docs lint test-python clean verify-raw docker-build docker-run
+.PHONY: report-pdf help setup pipeline load seed build test analyses docs serve-docs lint test-python clean verify-raw docker-build docker-run
 
 help:            ## show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-14s %s\n", $$1, $$2}'
@@ -62,3 +62,8 @@ docker-build:    ## build the reproducible image
 
 docker-run:      ## run the full pipeline inside the image; results land in ./data, ./logs, ./docs
 	docker run --rm -v "$(CURDIR)/data:/app/data" -v "$(CURDIR)/logs:/app/logs" -v "$(CURDIR)/docs/analysis_results:/app/docs/analysis_results" gss-religiosity-media
+
+report-pdf:      ## render report/report.md to report/report.pdf (needs pandoc and Google Chrome)
+	sed 's/\\newpage/<div style="page-break-before: always"><\/div>/' report/report.md > /tmp/gss_report.md
+	pandoc /tmp/gss_report.md -s --css report/report.css --embed-resources -o /tmp/gss_report.html
+	"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --disable-gpu --no-pdf-header-footer --print-to-pdf=report/report.pdf file:///tmp/gss_report.html
