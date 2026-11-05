@@ -10,7 +10,8 @@ jobs:
     timeout-minutes: 15
     env:
       DBT_TARGET: ci
-      GSS_DB_PATH: ${{ github.workspace }}/data/gss_ci.duckdb
+      # File stem must be "gss": DuckDB names the catalog after it and dbt/…/_gss__sources.yml says `database: gss`.
+      GSS_DB_PATH: ${{ github.workspace }}/data/gss.duckdb
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
@@ -20,17 +21,18 @@ jobs:
         run: uv sync --all-groups --frozen
       - name: Verify raw extracts are untouched
         run: cd source/data/raw && shasum -a 256 -c MANIFEST.sha256
-      # Before lint: sqlfluff's dbt templater compiles the project, which needs dbt_utils.
       - name: dbt deps
         run: cd dbt && uv run dbt deps --profiles-dir .
-      - name: Lint
-        run: |
-          uv run ruff check source
-          cd dbt && uv run sqlfluff lint models analyses tests --dialect duckdb
       - name: Loader tests
         run: uv run pytest -q
       - name: Full pipeline (load, seed, build incl. dbt tests, analyses, docs)
         run: uv run python -m source.pipeline.run
+      # After the pipeline: sqlfluff's dbt templater compiles the project, and some models
+      # (fct_respondents) read the seed tables at compile time, so the database must be populated.
+      - name: Lint
+        run: |
+          uv run ruff check source
+          cd dbt && uv run sqlfluff lint models analyses tests --dialect duckdb
       - name: Upload run evidence
         if: always()
         uses: actions/upload-artifact@v4
