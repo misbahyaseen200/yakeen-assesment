@@ -227,19 +227,13 @@ seeds load with `dbt build` so their tests run first.
 
 # 12. AI use and human oversight
 
-**Tool.** Claude Code (Anthropic, Claude Fable 5.1) in a terminal session, as pair programmer
-and research assistant throughout.
+**Tool.** Claude Code (Anthropic), used as AI support.
 
 **What the AI did.** Explained the brief; guided navigation of the Explorer; kept the
 variable-availability log from screenshots and pasted "summary by year" tables I supplied;
 proposed the year choice, variable mapping and mitigations for me to decide; wrote the profiling
 script, loader and tests, dbt project, analyses, orchestrator, Makefile, Dockerfile, CI, docs and
 the first draft of this report; ran and debugged everything locally.
-
-**What I did.** Created the account; found, opened and captured every candidate variable and
-its code list; chose among variants; built and downloaded both extracts; made the decisions the
-AI proposed options for (years, variable set, weight, handling of `evwork` and 2021); reviewed
-the code and documents before submission and take responsibility for them.
 
 **Where a human corrected the AI.** Its initial guesses that `news` ended in 2016 and `indus10`
 began in 2012 were wrong; the Explorer pages I captured corrected them. I added `prayer` instead
