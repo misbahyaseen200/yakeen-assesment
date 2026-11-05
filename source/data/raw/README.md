@@ -20,5 +20,12 @@ Variables requested (25): id_, ballot, year, inttech, wwwhr, evwork, news, wrkst
 postlife, relig16, reliten, degree, relig, attend, sex, region, tvhours, age, pray, relitenv, relitennv,
 wtssps, wtssnrps. Cut B additionally contains `prayer`, left in the cart by mistake (documented, not modelled).
 
-Integrity: `shasum -a 256 -c MANIFEST.sha256` from this folder.
+Integrity: `shasum -a 256 -c MANIFEST.sha256` from this folder (or `make verify-raw`).
+
+The original download archives are not committed (they only wrap the files above); their hashes, for provenance:
+
+```
+859d037405eee87f50eca5be39bc13adeada3b405f675e7d228c1f5a2cf93ff3  gss_cut_a_2016_2018.zip
+65d99cb13888ac4c2b7924a950caf85ac7549db487ee59a2a55b3411fdd8ec55  gss_cut_b_2018_2021.zip
+```
 Nothing in this folder is ever edited; all transformation happens downstream in the loader and dbt.

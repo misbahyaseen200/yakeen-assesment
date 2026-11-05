@@ -47,8 +47,10 @@ def step_commands(settings: Settings) -> dict[str, list[str]]:
     py = [sys.executable, "-m"]
     return {
         "load": [*py, "source.pipeline.load_extracts", "--all"],
-        "seed": _dbt(settings, "build", "--select", "resource_type:seed"),  # seeds + their tests
-        "build": _dbt(settings, "build", "--exclude", "resource_type:seed"),
+        # cautious indirect selection: a test runs in the step where ALL of its parents exist,
+        # so a seed<->model relationship test waits for the build step on a fresh database.
+        "seed": _dbt(settings, "build", "--select", "resource_type:seed", "--indirect-selection", "cautious"),
+        "build": _dbt(settings, "build", "--exclude", "resource_type:seed", "--indirect-selection", "cautious"),
         "analyses": [*py, "source.pipeline.run_analyses"],
         "docs": _dbt(settings, "docs", "generate"),
     }

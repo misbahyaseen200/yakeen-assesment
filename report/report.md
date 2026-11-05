@@ -278,7 +278,7 @@ every run recorded; Python-repr file rejected; ragged columns rejected; duplicat
 undeclared year rejected; missing key column rejected; nested value rejected; unexpected column
 is a warning; a failed re-delivery leaves previous rows intact and records the failure.
 
-dbt (101): seed integrity (33); generic model tests (60: keys, not-null, accepted values,
+dbt (101): seed integrity (31); generic model tests (62: keys, not-null, accepted values,
 ranges, "value columns null unless answer", "answers have a value"); singular (8): overlap rows
 identical across cuts; no unmapped values; metadata and source agree on "not asked in year"; no
 answers off-ballot; `evwork` only for non-working; `wtssps` sums to n per year; respondent counts

@@ -102,8 +102,8 @@ test outcome). Re-running after a fix is safe: `make pipeline` again, or
 | what | command | count |
 |---|---|---|
 | loader: idempotency, order independence, overlap identity, bad input | `make test-python` | 12 |
-| dbt: seed tests (code uniqueness, closed vocabularies, relationships) | `make seed` | 33 |
-| dbt: model tests (keys, accepted values, ranges, 8 singular expectations) | `make build` | 68 |
+| dbt: seed tests (code uniqueness, closed vocabularies, relationships) | `make seed` | 31 |
+| dbt: model tests (keys, accepted values, ranges, relationships, 8 singular expectations) | `make build` | 70 |
 | lint: ruff and sqlfluff | `make lint` | |
 
 ## Reproducing the extracts
