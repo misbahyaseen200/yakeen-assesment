@@ -137,4 +137,9 @@ Census industry classification. Models read these seeds; no SQL repeats a code o
 
 | design said | final build | why |
 |---|---|---|
-| (none yet) | | |
+| all staging models are views | `stg_gss__responses` is a table | it is the most expensive query in the project and has two consumers; measured in [query_plans.md](query_plans.md) |
+| coarse groupings (`group_label`) live in `seed_gss__code_labels` | separate seed `seed_gss__answer_groups` | `seed_gss__code_labels` is generated from the extracts and regenerating it would wipe hand-curated columns; a separate hand-curated seed keeps generated and curated metadata apart |
+| wide mart emits `_label`, `_code`, `_status` per categorical variable | also `_group`, but only for variables that have rows in `seed_gss__answer_groups` | avoids 20 redundant columns that would just repeat the label |
+| loader rejects unexpected columns | loader loads them, logs a warning and records them in `raw.load_runs`; the dbt layer leaves them out of the marts via `is_modelled = false` | cut B arrived with an extra column (`prayer`); raw must preserve what was received, and a hard failure would have blocked the whole load for a harmless surprise |
+| seeds loaded with `dbt seed` | seeds loaded with `dbt build --select resource_type:seed` | so the seed tests (uniqueness of codes, closed vocabularies) run before any model depends on them |
+| "not asked that year" derived from metadata, source `.y` as a check | as designed, and the check found the inconsistency predicted in the profile: `relitenv`/`relitennv` are `.i` in 2016/2018 | kept; `missing_detail = not_fielded_per_metadata` records that the override happened |

@@ -1,6 +1,11 @@
 -- Long form: one row per extract x respondent x variable, unpivoted generically from the JSON
 -- record. No variable name is written here, so a new variable in a future extract flows
 -- through without touching staging. The key columns (year, id_) are not responses.
+--
+-- Materialised as a table, unlike the other staging models: the JSON unpivot is the most
+-- expensive operation in the project and has two consumers (the classification model and the
+-- overlap test). See docs/query_plans.md for the measured before/after.
+{{ config(materialized='table') }}
 
 with extract_rows as (
 
