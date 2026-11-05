@@ -4,7 +4,10 @@
 
 with expected as (
 
-    select * from (values (2016, 2867), (2018, 2348), (2021, 4032)) as t (year, n_expected)
+    select
+        expected_counts.year,
+        expected_counts.n_expected
+    from (values (2016, 2867), (2018, 2348), (2021, 4032)) as expected_counts (year, n_expected)
 
 ),
 

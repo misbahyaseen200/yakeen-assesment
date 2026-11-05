@@ -91,16 +91,19 @@ looked_up as (
     left join variables
         on collapsed.variable_name = variables.variable_name
     left join variable_years
-        on collapsed.variable_name = variable_years.variable_name
-        and collapsed.year = variable_years.year
+        on
+            collapsed.variable_name = variable_years.variable_name
+            and collapsed.year = variable_years.year
     left join reserved_codes
         on collapsed.raw_value = reserved_codes.code_label
     left join code_labels
-        on collapsed.variable_name = code_labels.variable_name
-        and collapsed.raw_value = code_labels.code_label
+        on
+            collapsed.variable_name = code_labels.variable_name
+            and collapsed.raw_value = code_labels.code_label
     left join answer_groups
-        on code_labels.variable_name = answer_groups.variable_name
-        and code_labels.code = answer_groups.code
+        on
+            code_labels.variable_name = answer_groups.variable_name
+            and code_labels.code = answer_groups.code
 
 ),
 
@@ -127,7 +130,7 @@ classified as (
             else 'unmapped'
         end as value_status,
         case
-            when coverage = 'none' and source_reserved_code is distinct from -70
+            when coverage = 'none' and coalesce(source_reserved_code, 0) <> -70
                 then 'not_fielded_per_metadata'
             else reserved_missing_detail
         end as missing_detail,

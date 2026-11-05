@@ -9,5 +9,6 @@ select
     evwork_label,
     'evwork answered by a respondent who is working or unemployed' as reason
 from {{ ref('fct_respondents') }}
-where evwork_status = 'answer'
+where
+    evwork_status = 'answer'
     and wrkstat_code between 1 and 4

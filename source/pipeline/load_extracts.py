@@ -24,7 +24,7 @@ import json
 import logging
 import sys
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -128,7 +128,7 @@ def load_extract(
     name = extract["extract_name"]
     path = raw_dir / extract["file"]
     run_id = str(uuid.uuid4())
-    started = datetime.now(timezone.utc)
+    started = datetime.now(UTC)
     ctx = {"extract": name, "run_id": run_id, "file": str(path)}
     log(logger, logging.INFO, "load.start", **ctx)
 
@@ -148,7 +148,7 @@ def load_extract(
         for w in report.warnings:
             log(logger, logging.WARNING, "load.validation_warning", warning=w, **ctx)
 
-        loaded_at = datetime.now(timezone.utc)
+        loaded_at = datetime.now(UTC)
         row_tuples = [
             (
                 name,
@@ -187,20 +187,20 @@ def load_extract(
         if rows_loaded != report.rows_read:  # defensive: should be impossible after commit
             raise RuntimeError(f"{name}: loaded {rows_loaded} rows but read {report.rows_read}")
 
-        result = dict(
-            load_run_id=run_id,
-            extract_name=name,
-            source_file=str(path.relative_to(raw_dir)),
-            source_file_sha256=file_hash,
-            started_at=started,
-            finished_at=datetime.now(timezone.utc),
-            status="success",
-            rows_read=report.rows_read,
-            rows_loaded=rows_loaded,
-            unexpected_columns=json.dumps(report.unexpected_columns),
-            validation=report.to_json(),
-            error=None,
-        )
+        result = {
+            "load_run_id": run_id,
+            "extract_name": name,
+            "source_file": str(path.relative_to(raw_dir)),
+            "source_file_sha256": file_hash,
+            "started_at": started,
+            "finished_at": datetime.now(UTC),
+            "status": "success",
+            "rows_read": report.rows_read,
+            "rows_loaded": rows_loaded,
+            "unexpected_columns": json.dumps(report.unexpected_columns),
+            "validation": report.to_json(),
+            "error": None,
+        }
         _record_run(conn, **result)
         log(
             logger, logging.INFO, "load.success", rows_read=report.rows_read, rows_loaded=rows_loaded,
@@ -209,20 +209,20 @@ def load_extract(
         return result
 
     except Exception as exc:  # validation or database failure: record it, load nothing
-        result = dict(
-            load_run_id=run_id,
-            extract_name=name,
-            source_file=str(path.relative_to(raw_dir)) if path.is_relative_to(raw_dir) else str(path),
-            source_file_sha256=file_hash,
-            started_at=started,
-            finished_at=datetime.now(timezone.utc),
-            status="failed",
-            rows_read=None,
-            rows_loaded=None,
-            unexpected_columns=None,
-            validation=None,
-            error=f"{type(exc).__name__}: {exc}",
-        )
+        result = {
+            "load_run_id": run_id,
+            "extract_name": name,
+            "source_file": str(path.relative_to(raw_dir)) if path.is_relative_to(raw_dir) else str(path),
+            "source_file_sha256": file_hash,
+            "started_at": started,
+            "finished_at": datetime.now(UTC),
+            "status": "failed",
+            "rows_read": None,
+            "rows_loaded": None,
+            "unexpected_columns": None,
+            "validation": None,
+            "error": f"{type(exc).__name__}: {exc}",
+        }
         _record_run(conn, **result)
         log(logger, logging.ERROR, "load.failed", error=result["error"], **ctx)
         raise
@@ -265,7 +265,7 @@ def main(argv: list[str] | None = None) -> int:
         results = load_all(settings, None if args.all else args.extract)
     except ValidationError:
         return 2
-    except Exception:
+    except Exception:  # noqa: BLE001 - already logged in load_extract; only the exit code is needed here
         return 1
     for r in results:
         print(f"{r['extract_name']}: {r['status']} rows_loaded={r['rows_loaded']} run_id={r['load_run_id']}")

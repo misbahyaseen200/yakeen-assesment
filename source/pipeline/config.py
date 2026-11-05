@@ -43,7 +43,7 @@ class Settings:
     dbt_target: str
 
     @classmethod
-    def from_env(cls) -> "Settings":
+    def from_env(cls) -> Settings:
         _load_dotenv(REPO_ROOT / ".env")
 
         def path(key: str, default: str) -> Path:

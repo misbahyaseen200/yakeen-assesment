@@ -25,8 +25,10 @@ pivoted as (
         respondents.id_,
         respondents.source_extracts,
         respondents.is_in_both_cuts
-        {%- for column_expression in wide_columns %},
-        {{ column_expression }}
+        {%- for column_expression in wide_columns %}
+            ,
+            {{ column_expression }}
+    
         {%- endfor %}
     from respondents
     left join responses

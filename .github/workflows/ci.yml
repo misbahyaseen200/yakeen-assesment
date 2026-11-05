@@ -1,0 +1,41 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      DBT_TARGET: ci
+      GSS_DB_PATH: ${{ github.workspace }}/data/gss_ci.duckdb
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.12.19"
+      - name: Install pinned environment
+        run: uv sync --all-groups --frozen
+      - name: Verify raw extracts are untouched
+        run: cd source/data/raw && shasum -a 256 -c MANIFEST.sha256
+      - name: Lint
+        run: |
+          uv run ruff check source
+          cd dbt && uv run sqlfluff lint models analyses tests --dialect duckdb
+      - name: Loader tests
+        run: uv run pytest -q
+      - name: dbt deps
+        run: cd dbt && uv run dbt deps --profiles-dir .
+      - name: Full pipeline (load, seed, build incl. dbt tests, analyses, docs)
+        run: uv run python -m source.pipeline.run
+      - name: Upload run evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pipeline-evidence
+          path: |
+            logs/
+            dbt/target/run_results.json
+            docs/analysis_results/

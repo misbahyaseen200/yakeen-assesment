@@ -15,11 +15,11 @@ unpivoted as (
         extract_rows.year,
         extract_rows.id_,
         extract_rows.respondent_key,
-        keys.variable_name,
-        json_extract_string(extract_rows.record, '$.' || keys.variable_name) as raw_value,
-        json_type(extract_rows.record, '$.' || keys.variable_name) as raw_json_type
+        record_keys.variable_name,
+        json_extract_string(extract_rows.record, '$.' || record_keys.variable_name) as raw_value,
+        json_type(extract_rows.record, '$.' || record_keys.variable_name) as raw_json_type
     from extract_rows,
-        unnest(json_keys(extract_rows.record)) as keys (variable_name)
+        unnest(json_keys(extract_rows.record)) as record_keys (variable_name)
 
 )
 

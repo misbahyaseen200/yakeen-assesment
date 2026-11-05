@@ -1,0 +1,30 @@
+[sqlfluff]
+dialect = duckdb
+templater = dbt
+max_line_length = 140
+exclude_rules = ST06,ST07,AM04,LT05
+
+[sqlfluff:templater:dbt]
+project_dir = .
+profiles_dir = .
+
+[sqlfluff:indentation]
+indent_unit = space
+tab_space_size = 4
+
+[sqlfluff:rules:capitalisation.keywords]
+capitalisation_policy = lower
+[sqlfluff:rules:capitalisation.identifiers]
+extended_capitalisation_policy = lower
+[sqlfluff:rules:capitalisation.functions]
+extended_capitalisation_policy = lower
+[sqlfluff:rules:capitalisation.literals]
+capitalisation_policy = lower
+[sqlfluff:rules:references.keywords]
+# 'year' is the GSS survey-year column name used throughout; keep it rather than alias it
+ignore_words = year
+
+[sqlfluff:rules:aliasing.table]
+aliasing = explicit
+[sqlfluff:rules:references.consistent]
+single_table_references = consistent

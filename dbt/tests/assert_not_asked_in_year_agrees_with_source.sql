@@ -17,7 +17,8 @@ answers_where_not_fielded as (
         count(*) as n_rows,
         'metadata says not fielded but source has a substantive answer' as reason
     from classified
-    where coverage = 'none'
+    where
+        coverage = 'none'
         and source_reserved_code is null
     group by variable_name, year
 
@@ -31,7 +32,8 @@ source_says_not_available_but_metadata_disagrees as (
         count(*) as n_rows,
         'source code -70 (.y) but metadata says the variable was fielded' as reason
     from classified
-    where source_reserved_code = -70
+    where
+        source_reserved_code = -70
         and coverage <> 'none'
     group by variable_name, year
 

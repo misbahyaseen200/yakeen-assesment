@@ -35,9 +35,11 @@ violations as (
     inner join respondents
         on responses.respondent_key = respondents.respondent_key
     inner join variable_years
-        on responses.variable_name = variable_years.variable_name
-        and responses.year = variable_years.year
-    where responses.value_status = 'answer'
+        on
+            responses.variable_name = variable_years.variable_name
+            and responses.year = variable_years.year
+    where
+        responses.value_status = 'answer'
         and not list_contains(string_split(variable_years.ballots, ','), respondents.ballot_letter)
     group by responses.variable_name, responses.year, respondents.ballot_letter
 
