@@ -1,0 +1,15 @@
+# SHA-256 of raw files exactly as received from the GSS Data Explorer (2026-11-03).
+# Verify with: cd source/data/raw && shasum -a 256 -c MANIFEST.sha256
+889df6b5680d6df7092c5590302aaa2cc80335fd37d619d62468636f48b139bf  cut_a_2016_2018/GSS.dat
+c32452c938d344b8617f66e6dc151b605c50123c07a74799c42db55637633344  cut_a_2016_2018/GSS.json
+b8caa6734eec89b45edd3de2857eac4661adb2e2b09a82e801c0a48405c6d66c  cut_a_2016_2018/GSS.xlsx
+fbc46a83efd65f91ae5565cd8b241b377db878f7517dd8024c426f8df2d182cf  cut_a_2016_2018/post_processing_output.json
+5c7d7f6c2b9cfc8f58831f6b3dc5a2a33e6f55ad6559c651a89e831fdfcf4b7b  cut_a_2016_2018/xml.ddi3
+541716c5b2b50824b6ff3105f139fa3e0f75bf19c04bc76c3d194cebbbf87fab  cut_b_2018_2021/GSS.dat
+d41fc12257abbea5ef0c6024eada70c45df80162585b493d9b1352881602494a  cut_b_2018_2021/GSS.json
+ff2da81cbbbee8c6200a592778620ecb2e574b7e100bbb0b44d36d2b77202fc2  cut_b_2018_2021/GSS.xlsx
+a19b91383bd88ee66b71b339badaf0dfd061f9d2b1b510aa712dcec1f8e4a93b  cut_b_2018_2021/post_processing_output.json
+38bb86c08c15f2dba3138eafde7b49d2db1c525645f9bb052297b6e2a68f3bca  cut_b_2018_2021/xml.ddi3
+# Original download archives (not committed; kept for provenance):
+859d037405eee87f50eca5be39bc13adeada3b405f675e7d228c1f5a2cf93ff3  gss_cut_a_2016_2018.zip
+65d99cb13888ac4c2b7924a950caf85ac7549db487ee59a2a55b3411fdd8ec55  gss_cut_b_2018_2021.zip
