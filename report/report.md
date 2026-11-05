@@ -251,8 +251,8 @@ faster deduplication because its own check showed changed results.
 decisions 50/50 (AI proposed, I chose); code and documentation about 85% AI / 15% me (review,
 corrections, decisions). I can explain every file in the repository.
 
-**Time spent.** About __ hours (Explorer research and extracts __ h; pipeline, dbt and SQL __ h;
-report __ h). *[Candidate: fill in before submitting.]* With more time: derive validity metadata
+**Time spent.** About 8 hours (Explorer research and extracts 2 h; pipeline, dbt and SQL 4.5 h;
+report 1.5 h). With more time: derive validity metadata
 from NORC's codebook; quantify design effects for small groups; run the Docker path on a clean
 machine.
 
