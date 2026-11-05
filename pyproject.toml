@@ -1,0 +1,25 @@
+[project]
+name = "gss-religiosity-media"
+version = "0.1.0"
+description = "GSS religiosity and media-consumption pipeline: Python loader + dbt (DuckDB)"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "duckdb==2.0.0",
+    "dbt-core==1.12.6",
+    "dbt-duckdb==1.11.1",
+]
+
+[dependency-groups]
+dev = [
+    "pytest==9.2.0",
+    "ruff",
+    "sqlfluff==4.5.0",
+    "sqlfluff-templater-dbt",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.pytest.ini_options]
+testpaths = ["source/tests"]

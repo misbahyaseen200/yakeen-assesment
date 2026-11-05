@@ -1,0 +1,22 @@
+{
+  "_comment": "Declared contract for each raw extract. The loader validates the file against this before loading.",
+  "extracts": [
+    {
+      "extract_name": "cut_a_2016_2018",
+      "file": "cut_a_2016_2018/post_processing_output.json",
+      "years": [2016, 2018],
+      "expected_rows": 5215
+    },
+    {
+      "extract_name": "cut_b_2018_2021",
+      "file": "cut_b_2018_2021/post_processing_output.json",
+      "years": [2018, 2021],
+      "expected_rows": 6380
+    }
+  ],
+  "expected_variables": [
+    "id_", "ballot", "year", "inttech", "wwwhr", "evwork", "news", "wrkstat", "indus10", "satjob",
+    "postlife", "relig16", "reliten", "degree", "relig", "attend", "sex", "region", "tvhours", "age",
+    "pray", "relitenv", "relitennv", "wtssps", "wtssnrps"
+  ]
+}
